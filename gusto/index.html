@@ -165,20 +165,56 @@ section.blok{padding:clamp(72px,10vw,140px) var(--rand)}
   .held .onder{font-size:17px;margin-top:10px}
   .held .meta{min-height:54px;display:flex;align-items:center;max-width:calc(100% - 208px + var(--rand));margin-top:4px;font-size:15px;line-height:1.35}
   .welkom{grid-template-columns:minmax(0,1fr)}
-  .welkom .foto img{width:min(100%,180px);aspect-ratio:3/4}
+  section.blok{padding:52px var(--rand)}
+  .welkom{gap:26px}
+  .welkom .foto img{width:100%;max-width:none;aspect-ratio:4/3;max-height:240px;object-position:50% 60%}
   .dag .beeld img{max-height:240px}
   .dag .beeld{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   .rij{grid-auto-columns:84%}
   .rij img{aspect-ratio:4/3;max-height:240px}
   .praktisch dl{grid-template-columns:minmax(0,1fr)}
   .voet .in{grid-template-columns:minmax(0,1fr)}
-  .rit{height:auto;padding:18px var(--rand) 0;min-height:200px}
+  .rit{height:236px;padding:20px var(--rand) 0}
+  .rit img{width:150px}
   .rit p{position:static;text-align:left;padding:0;max-width:none}
   .held .lang,.voorbeeld .lang{display:none}
   .held .kort{display:inline}
   .bot{padding:0 20px 0 16px}
   .bot .lang{display:none}
   .catering .foto img{max-height:240px}
+  .rij-blok{padding-bottom:52px}
+  #dag{padding-top:36px}
+  .voet{padding-top:52px}
+}
+
+/* paneel: reserveren (Guestplan) + AI-receptionist (luisteren) */
+.laag{position:fixed;inset:0;z-index:50;background:rgb(0 0 0 / .25);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.paneel{position:fixed;z-index:51;right:16px;bottom:84px;width:min(392px,calc(100vw - 16px));max-height:min(560px,calc(100dvh - 120px));overflow-y:auto;overscroll-behavior:contain;background:#fff;border-radius:22px;box-shadow:0 24px 60px -18px rgb(0 0 0 / .45);padding:18px 18px 16px;outline:none}
+.paneel[hidden],.laag[hidden]{display:none}
+.paneel .greep{display:none;width:40px;height:4px;border-radius:4px;background:#d4d4d4;margin:-6px auto 10px}
+.paneel h2{font-size:20px;line-height:1.2;margin:0 40px 12px 2px}
+.paneel .sluit{position:absolute;top:8px;right:8px;width:44px;height:44px;border:0;background:none;cursor:pointer;display:grid;place-items:center;color:var(--zwart)}
+.paneel .sluit span{width:28px;height:28px;border-radius:50%;background:#f1f1f1;display:grid;place-items:center;font-size:18px;line-height:1}
+.optie{display:grid;grid-template-columns:40px minmax(0,1fr);gap:2px 12px;align-items:center;width:100%;text-align:left;padding:12px;border:1px solid var(--lijn);border-radius:16px;background:#fff;font:inherit;color:inherit;text-decoration:none;margin-bottom:10px}
+button.optie{cursor:pointer}
+button.optie:hover{border-color:var(--zwart)}
+.optie .ic{grid-row:span 2;width:40px;height:40px;border-radius:12px;background:var(--zwart);color:#fff;display:grid;place-items:center}
+.optie .ic svg{width:20px;height:20px}
+.optie b{font-size:17px;line-height:1.25}
+.optie small{font-size:14.5px;line-height:1.35;color:var(--grijs)}
+.speler{grid-column:1 / -1;display:flex;align-items:center;gap:10px;margin-top:10px}
+.speler button{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:var(--zwart);color:#fff;cursor:pointer;display:grid;place-items:center}
+.speler button svg{width:16px;height:16px}
+.speler .balkje{flex:1;height:4px;border-radius:4px;background:var(--lijn);overflow:hidden}
+.speler .balkje b{display:block;height:100%;width:0;background:var(--zwart)}
+.speler .tijd{font-size:13.5px;color:var(--grijs);font-variant-numeric:tabular-nums}
+.ondertitel{grid-column:1 / -1;font-size:15px;line-height:1.4;margin-top:8px;padding:8px 10px;border-radius:10px;background:#f4f4f4}
+.ondertitel:empty{display:none}
+.ondertitel em{font-style:normal;color:var(--grijs);font-size:12.5px;display:block}
+.paneel .vb{font-size:13px;line-height:1.45;color:var(--grijs);margin:2px 2px 0}
+@media (max-width:860px){
+  .paneel{left:8px;right:8px;bottom:8px;width:auto;max-height:calc(100dvh - 90px);border-radius:20px;padding-top:16px}
+  .paneel .greep{display:block}
 }
 </style>
 <!-- Guestplan: hun eigen widget, opent alleen via de knop rechtsonder -->
@@ -336,13 +372,70 @@ section.blok{padding:clamp(72px,10vw,140px) var(--rand)}
   <p class="klein">© 2026 Gusto World of Pizza</p>
 </footer>
 
-<button class="bot" type="button" id="reserveer" aria-label="Reserveer een tafel">
-  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg><span>Reserveer<span class="lang">&nbsp;een tafel</span></span></button>
+<button class="bot" type="button" id="reserveer" aria-haspopup="dialog" aria-controls="paneel">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg><span>Reserveer of bel</span></button>
+
+<div class="laag" id="laag" hidden></div>
+<section class="paneel" id="paneel" role="dialog" aria-modal="true" aria-labelledby="paneel-kop" tabindex="-1" hidden>
+  <div class="greep" aria-hidden="true"></div>
+  <button class="sluit" type="button" id="sluit" aria-label="Sluiten"><span>&times;</span></button>
+  <h2 id="paneel-kop">Gusto World of Pizza</h2>
+  <button class="optie" type="button" id="opt-reserveer">
+    <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="5" width="17" height="15" rx="3"/><path d="M8 3v4M16 3v4M3.5 10h17"/></svg></span>
+    <b>Tafel reserveren</b><small>Direct in onze agenda, via Guestplan</small>
+  </button>
+  <div class="optie">
+    <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 4h4l2 5-2.5 1.5a11 11 0 0 0 5 5L15 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 6a2 2 0 0 1 2-2"/></svg></span>
+    <b>Bel onze AI-receptionist</b><small>Neemt altijd op en boekt meteen in Guestplan</small>
+    <div class="speler">
+      <button type="button" id="speel" aria-label="Luister naar een voorbeeldgesprek"><svg viewBox="0 0 24 24" aria-hidden="true"><path id="speel-icoon" d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></button>
+      <div class="balkje" aria-hidden="true"><b id="balkje"></b></div>
+      <span class="tijd" id="speel-tijd">0:47</span>
+    </div>
+    <div class="ondertitel" id="ondertitel" aria-live="polite"></div>
+  </div>
+  <p class="vb">Voorbeeld door DesignCheck: zo klinkt de AI-receptionist straks bij Gusto. Nu bellen: <a href="tel:+31203583737">020-358 37 37</a></p>
+</section>
 <script>
-  document.getElementById('reserveer').addEventListener('click', function () {
+(function () {
+  var knop = document.getElementById('reserveer'), paneel = document.getElementById('paneel'), laag = document.getElementById('laag');
+  var audio = new Audio('audio/gusto-reservering.mp3'), zinnen = [], raf = 0, lusZin = -2;
+  audio.preload = 'none';
+  function open() { paneel.hidden = false; laag.hidden = false; paneel.focus(); }
+  function dicht() { paneel.hidden = true; laag.hidden = true; audio.pause(); zetIcoon(false); knop.focus(); }
+  knop.addEventListener('click', function () { if (paneel.hidden) open(); else dicht(); });
+  document.getElementById('sluit').addEventListener('click', dicht);
+  laag.addEventListener('click', dicht);
+  addEventListener('keydown', function (e) { if (e.key === 'Escape' && !paneel.hidden) dicht(); });
+  // naar beneden vegen sluit (telefoon)
+  var y0 = null;
+  paneel.addEventListener('touchstart', function (e) { y0 = paneel.scrollTop <= 0 ? e.touches[0].clientY : null; }, { passive: true });
+  paneel.addEventListener('touchend', function (e) { if (y0 !== null && e.changedTouches[0].clientY - y0 > 110) dicht(); y0 = null; });
+  document.getElementById('opt-reserveer').addEventListener('click', function () {
+    dicht();
     if (window._gstpln && typeof _gstpln.openBookingWidget === 'function') { _gstpln.openBookingWidget(); }
     else { location.href = 'mailto:reserveren@gustoworldofpizza.nl'; }
   });
+  // luisteren: het voorbeeldgesprek, met de zin die op dat moment klinkt
+  var icoon = document.getElementById('speel-icoon'), balk = document.getElementById('balkje'), tijd = document.getElementById('speel-tijd'), ot = document.getElementById('ondertitel');
+  fetch('audio/gusto-reservering.json').then(function (r) { return r.json(); }).then(function (j) { zinnen = j.zinnen; });
+  function mmss(t) { t = Math.max(0, Math.round(t)); return Math.floor(t / 60) + ':' + ('0' + t % 60).slice(-2); }
+  function zetIcoon(speelt) { icoon.setAttribute('d', speelt ? 'M7 5h4v14H7zM13 5h4v14h-4z' : 'M8 5.5v13l11-6.5z'); }
+  function lus() {
+    var t = audio.currentTime, d = audio.duration || 47;
+    balk.style.width = (100 * t / d) + '%'; tijd.textContent = mmss(t);
+    var z = null, zi = -1;
+    for (var i = 0; i < zinnen.length; i++) if (t >= zinnen[i].van - 0.05) { z = zinnen[i]; zi = i; }
+    if (zi !== lusZin) { lusZin = zi; ot.textContent = ''; }
+    if (z && !ot.firstChild) { var em = document.createElement('em'); em.textContent = z.wie === 'bot' ? 'Receptionist' : 'Beller'; ot.appendChild(em); ot.appendChild(document.createTextNode(z.tekst)); }
+    if (!audio.paused && !audio.ended) raf = requestAnimationFrame(lus);
+  }
+  document.getElementById('speel').addEventListener('click', function () {
+    if (audio.paused) { audio.play().then(function () { zetIcoon(true); raf = requestAnimationFrame(lus); }); }
+    else { audio.pause(); zetIcoon(false); }
+  });
+  audio.addEventListener('ended', function () { zetIcoon(false); lus(); });
+})();
 </script>
 </body>
 </html>
