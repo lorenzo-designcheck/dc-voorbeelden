@@ -1,0 +1,71 @@
+{
+ "duur": 47.68,
+ "zinnen": [
+  {
+   "wie": "bot",
+   "tekst": "Goedenavond, Sushi Time. Wilt u bestellen voor bezorgen of afhalen?",
+   "van": 0.45,
+   "tot": 4.93
+  },
+  {
+   "wie": "klant",
+   "tekst": "Bezorgen graag.",
+   "van": 5.33,
+   "tot": 6.61
+  },
+  {
+   "wie": "bot",
+   "tekst": "Wat is uw postcode en huisnummer?",
+   "van": 7.16,
+   "tot": 9.56
+  },
+  {
+   "wie": "klant",
+   "tekst": "3641, nummer 12. Mijdrecht.",
+   "van": 9.96,
+   "tot": 13.8
+  },
+  {
+   "wie": "bot",
+   "tekst": "Dank u. U valt onder Sushi Time Wilnis. Wat mag het zijn?",
+   "van": 14.35,
+   "tot": 18.35
+  },
+  {
+   "wie": "klant",
+   "tekst": "Een Mix Medium en twee pushpops Cream Salmon.",
+   "van": 18.75,
+   "tot": 22.59
+  },
+  {
+   "wie": "bot",
+   "tekst": "Een Mix Medium, 26 stuks, € 30,95, en twee Pushpop Cream Salmon à € 11,95. Samen € 54,85. Klopt dat?",
+   "van": 23.14,
+   "tot": 35.46
+  },
+  {
+   "wie": "klant",
+   "tekst": "Ja, klopt.",
+   "van": 35.86,
+   "tot": 36.98
+  },
+  {
+   "wie": "bot",
+   "tekst": "Op welke naam mag ik het zetten?",
+   "van": 37.53,
+   "tot": 39.53
+  },
+  {
+   "wie": "klant",
+   "tekst": "De Vries.",
+   "van": 39.93,
+   "tot": 40.73
+  },
+  {
+   "wie": "bot",
+   "tekst": "Genoteerd op naam De Vries. Uw bestelling staat klaar bij Sushi Time Wilnis. Eet smakelijk!",
+   "van": 41.28,
+   "tot": 47.28
+  }
+ ]
+}

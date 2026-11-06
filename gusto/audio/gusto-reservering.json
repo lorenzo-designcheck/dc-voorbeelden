@@ -1,0 +1,59 @@
+{
+ "duur": 46.49,
+ "zinnen": [
+  {
+   "wie": "bot",
+   "tekst": "Goedenavond, Gusto World of Pizza. Waarmee kan ik je helpen?",
+   "van": 0.45,
+   "tot": 4.45
+  },
+  {
+   "wie": "klant",
+   "tekst": "Hoi! Ik wil graag een tafel reserveren voor zaterdag. Met z'n vieren, rond half acht.",
+   "van": 4.85,
+   "tot": 10.45
+  },
+  {
+   "wie": "bot",
+   "tekst": "Leuk! Zaterdag om half acht, vier personen. Dat kan. Op welke naam mag ik het zetten?",
+   "van": 11.0,
+   "tot": 17.0
+  },
+  {
+   "wie": "klant",
+   "tekst": "Bakker.",
+   "van": 17.4,
+   "tot": 18.04
+  },
+  {
+   "wie": "bot",
+   "tekst": "Dank je. Moeten we nog ergens rekening mee houden?",
+   "van": 18.59,
+   "tot": 21.55
+  },
+  {
+   "wie": "klant",
+   "tekst": "Ja, een van ons eet glutenvrij. Kan dat bij jullie?",
+   "van": 21.95,
+   "tot": 25.47
+  },
+  {
+   "wie": "bot",
+   "tekst": "Goed dat je het zegt. We bakken alles in één oven, dus een glutenvrije pizza kunnen we helaas niet maken. Ons team denkt graag mee over iets anders lekkers. Ik zet het als notitie bij je reservering.",
+   "van": 26.02,
+   "tot": 38.02
+  },
+  {
+   "wie": "klant",
+   "tekst": "Top, dank je.",
+   "van": 38.42,
+   "tot": 39.62
+  },
+  {
+   "wie": "bot",
+   "tekst": "Graag gedaan. Zaterdag om half acht, vier personen, op naam van Bakker. Tot zaterdag!",
+   "van": 40.17,
+   "tot": 46.09
+  }
+ ]
+}

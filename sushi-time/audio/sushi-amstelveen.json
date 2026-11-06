@@ -1,0 +1,71 @@
+{
+ "duur": 40.56,
+ "zinnen": [
+  {
+   "wie": "bot",
+   "tekst": "Goedenavond, Sushi Time. Wilt u bestellen voor bezorgen of afhalen?",
+   "van": 0.45,
+   "tot": 4.93
+  },
+  {
+   "wie": "klant",
+   "tekst": "Bezorgen, in Amstelveen.",
+   "van": 5.33,
+   "tot": 7.49
+  },
+  {
+   "wie": "bot",
+   "tekst": "Wat is uw postcode en huisnummer?",
+   "van": 8.04,
+   "tot": 10.44
+  },
+  {
+   "wie": "klant",
+   "tekst": "1187, nummer 5.",
+   "van": 10.84,
+   "tot": 13.72
+  },
+  {
+   "wie": "bot",
+   "tekst": "Dank u. U valt onder Sushi Time Amstelveen Westwijk. Wat mag het zijn?",
+   "van": 14.27,
+   "tot": 19.15
+  },
+  {
+   "wie": "klant",
+   "tekst": "De Sushi Time Box.",
+   "van": 19.55,
+   "tot": 21.23
+  },
+  {
+   "wie": "bot",
+   "tekst": "De Sushi Time Box, € 37,45. Wilt u er nog iets bij?",
+   "van": 21.78,
+   "tot": 27.06
+  },
+  {
+   "wie": "klant",
+   "tekst": "Nee, dat is alles.",
+   "van": 27.46,
+   "tot": 29.14
+  },
+  {
+   "wie": "bot",
+   "tekst": "Op welke naam mag ik het zetten?",
+   "van": 29.69,
+   "tot": 31.69
+  },
+  {
+   "wie": "klant",
+   "tekst": "Jansen.",
+   "van": 32.09,
+   "tot": 32.97
+  },
+  {
+   "wie": "bot",
+   "tekst": "Genoteerd op naam Jansen. Uw bestelling staat klaar bij Sushi Time Amstelveen Westwijk. Eet smakelijk!",
+   "van": 33.52,
+   "tot": 40.16
+  }
+ ]
+}

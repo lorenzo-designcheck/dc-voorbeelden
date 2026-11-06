@@ -1,0 +1,428 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; media-src 'self'; connect-src 'self'; base-uri 'self'; form-action 'none'">
+<meta name="referrer" content="strict-origin-when-cross-origin">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sushi Time · één nummer voor de hele keten · demo AI-receptionist</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#2E2929">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gabarito:wght@400..800&display=swap" rel="stylesheet">
+<style data-dc-breedte>html{overflow-x:hidden}body{overflow-x:clip;max-width:100%}@media (max-width:359px){html{zoom:.8889}}</style>
+<style>
+:root{--inkt:#2E2929;--geel:#FED000;--groen:#00A281;--bg:#F5F3E8;--papier:#fff;--zacht:#6b6464;--lijn:#dcd8c8;--rand:clamp(18px,4.5vw,56px);--r:18px;--rk:12px}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--inkt);font-family:Gabarito,system-ui,sans-serif;font-size:18px;line-height:1.5;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block;height:auto}
+a{color:inherit}
+h1,h2,h3{margin:0;line-height:1.05;letter-spacing:-.01em}
+p{margin:0 0 .9em}
+.num{font-variant-numeric:tabular-nums}
+
+.balk{background:var(--inkt);color:#fff;font-size:14px;padding:8px var(--rand);display:flex;justify-content:space-between;gap:16px}
+.balk span:last-child{opacity:.75}
+
+header.top{max-width:1320px;margin:0 auto;padding:clamp(22px,3vw,36px) var(--rand) 18px;display:grid;grid-template-columns:minmax(0,7fr) minmax(0,5fr);gap:20px 48px;align-items:end}
+.top .logo{width:min(220px,55vw);margin-bottom:18px}
+.top h1{font-size:clamp(36px,4.3vw,64px);font-weight:800;max-width:15ch}
+.top h1 em{font-style:normal;background:linear-gradient(transparent 62%,var(--geel) 62%,var(--geel) 92%,transparent 92%)}
+.top .onder{font-size:clamp(17px,1.4vw,20px);max-width:44ch;margin:0;color:#3d3838}
+
+/* keuze scenario */
+.keuze{max-width:1320px;margin:0 auto;padding:8px var(--rand) 18px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.keuze .uitleg{font-weight:600;margin-right:6px}
+.keuze button{font:inherit;font-size:16px;min-height:46px;padding:0 18px;border-radius:var(--rk);border:1.5px solid var(--inkt);background:transparent;color:var(--inkt);cursor:pointer}
+.keuze button[aria-pressed="true"]{background:var(--inkt);color:#fff}
+.keuze button.opnieuw{border-color:transparent;text-decoration:underline;text-underline-offset:4px}
+.keuze [hidden]{display:none}
+.gesprek .startkaart{margin:auto;text-align:center;display:grid;justify-items:center;gap:14px;padding:20px}
+.speelknop{width:88px;height:88px;border-radius:50%;border:0;background:var(--geel);color:var(--inkt);display:grid;place-items:center;cursor:pointer;box-shadow:0 10px 30px -10px rgb(46 41 41 / .45);transition:transform .2s}
+.speelknop:hover{transform:scale(1.06)}
+.speelknop svg{width:38px;height:38px;margin-left:5px}
+.gesprek .startkaart p{margin:0;font-size:16px;color:var(--zacht)}
+.gesprek .startkaart p strong{color:var(--inkt);font-size:20px}
+.stilknop{font:inherit;font-size:14px;color:var(--zacht);background:none;border:0;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
+
+/* het podium */
+.podium{max-width:1320px;margin:0 auto;padding:0 var(--rand);display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr) minmax(0,4fr);gap:16px;align-items:stretch}
+.vak{background:var(--papier);border-radius:var(--r);border:1px solid var(--lijn);display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.vak-kop{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--lijn);font-size:15px}
+.vak-kop strong{font-size:16px}
+.live{display:inline-flex;align-items:center;gap:8px;color:var(--zacht)}
+.live i{width:9px;height:9px;border-radius:50%;background:#b9b3a4}
+.speelt .live i{background:var(--groen);box-shadow:0 0 0 4px rgb(0 162 129 / .18)}
+
+/* gesprek */
+.gesprek{flex:1;padding:18px;display:flex;flex-direction:column;gap:10px;min-height:440px;max-height:440px;overflow-y:auto;scroll-behavior:smooth}
+.zin{max-width:86%;padding:10px 14px;border-radius:16px;font-size:16.5px;line-height:1.4;animation:in .28s ease-out both}
+.zin.bot{background:var(--inkt);color:#fff;border-bottom-left-radius:5px;align-self:flex-start}
+.zin.klant{background:#f0ede2;border-bottom-right-radius:5px;align-self:flex-end}
+.zin small{display:block;font-size:12.5px;opacity:.65;margin-bottom:2px}
+.zin.typen{display:flex;gap:5px;padding:14px 16px}
+.zin.typen b{width:7px;height:7px;border-radius:50%;background:#fff;opacity:.5;animation:stip 1s infinite}
+.zin.typen b:nth-child(2){animation-delay:.15s}.zin.typen b:nth-child(3){animation-delay:.3s}
+.melding{align-self:center;font-size:13.5px;color:var(--groen);font-weight:600;text-align:center;padding:2px 8px;animation:in .3s both}
+@keyframes in{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes stip{50%{opacity:1}}
+
+/* kaart */
+.kaart{position:relative;flex:1;min-height:440px;background:#fbfaf4}
+.kaart svg{position:absolute;left:0;right:0;top:0;bottom:40px;width:100%;height:calc(100% - 40px)}
+.kaart .vest circle{fill:var(--inkt)}
+.kaart .vest text{fill:var(--inkt);font-family:Gabarito,sans-serif;font-weight:600}
+.kaart .vest.aan circle{fill:var(--groen)}
+.kaart .vest.aan text{fill:var(--groen);font-weight:800}
+.kaart .vest.uit{opacity:.28}
+.kaart .beller circle{fill:var(--geel);stroke:var(--inkt)}
+.kaart .beller text{font-family:Gabarito,sans-serif;font-weight:700;fill:var(--inkt)}
+.kaart .route{fill:none;stroke:var(--groen);stroke-linecap:round}
+.kaart-onder{position:absolute;left:14px;right:14px;bottom:12px;font-size:13px;color:var(--zacht);display:flex;justify-content:space-between;gap:12px;white-space:nowrap}
+
+/* bon */
+.bonvak .printer{position:relative;flex:1;padding:0 18px 18px;min-height:440px;overflow:hidden}
+.printer::before{content:"";position:absolute;left:12px;right:12px;top:0;height:10px;background:var(--inkt);border-radius:0 0 8px 8px;z-index:2}
+.bon{position:relative;margin:0 6px;background:#fffef9;border:1px solid #e7e2cf;border-top:0;padding:22px 18px 18px;font-size:15px;line-height:1.45;transform:translateY(-102%);transition:transform 1.6s cubic-bezier(.3,.7,.2,1)}
+.bon.uit{transform:translateY(0)}
+.bon h3{font-size:18px;font-weight:800}
+.bon .rij{display:flex;justify-content:space-between;gap:12px}
+.bon .rij span:last-child{white-space:nowrap;text-align:right}
+.bon hr{border:0;border-top:1.5px dashed #cfc9b3;margin:10px 0}
+.bon .groot{font-size:17px;font-weight:800}
+.bon .stempel{margin-top:12px;color:var(--groen);font-weight:700}
+.bon .klein{font-size:12.5px;color:var(--zacht);margin-top:8px}
+.leeg{position:absolute;left:24px;right:24px;top:64px;color:var(--zacht);font-size:15px;text-align:center;transition:opacity .3s}
+.bon.uit ~ .leeg{opacity:0}
+
+.noot{max-width:1320px;margin:14px auto 0;padding:0 var(--rand);font-size:14.5px;color:var(--zacht)}
+.noot strong{color:var(--inkt)}
+
+/* uitleg */
+.uitleg-blok{max-width:1320px;margin:0 auto;padding:clamp(72px,9vw,120px) var(--rand) 0;display:grid;grid-template-columns:minmax(0,4fr) minmax(0,7fr);gap:clamp(28px,5vw,80px)}
+.uitleg-blok h2{font-size:clamp(32px,3.6vw,52px);font-weight:800}
+.punten{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:30px 40px}
+.punten h3{font-size:21px;font-weight:700;margin-bottom:6px;display:flex;gap:10px;align-items:baseline}
+.punten h3 span{color:var(--groen);font-variant-numeric:tabular-nums}
+.punten p{color:#3d3838;margin:0}
+.prijsvb{margin-top:10px;font-size:15.5px;color:var(--inkt);border-left:3px solid var(--geel);padding:4px 0 4px 12px}
+
+.start{max-width:1320px;margin:clamp(72px,9vw,120px) auto 0;padding:clamp(36px,5vw,64px) var(--rand);background:var(--inkt);color:#fff;border-radius:0}
+.start .in{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(28px,5vw,80px);align-items:start}
+.start h2{font-size:clamp(30px,3.4vw,48px);font-weight:800}
+.start ol{margin:0;padding:0;list-style:none;display:grid;gap:18px;counter-reset:s}
+.start li{counter-increment:s;display:grid;grid-template-columns:40px minmax(0,1fr);gap:12px}
+.start li::before{content:counter(s);width:34px;height:34px;border-radius:50%;background:var(--geel);color:var(--inkt);display:grid;place-items:center;font-weight:800}
+.start li strong{display:block}
+.start li span{opacity:.8}
+.start .afspraak{display:inline-flex;align-items:center;gap:10px;margin-top:28px;min-height:52px;padding:0 22px;border-radius:var(--rk);background:var(--geel);color:var(--inkt);text-decoration:none;font-weight:700;transition:transform .2s}
+.start .afspraak:hover{transform:translateY(-2px)}
+
+footer{max-width:1320px;margin:0 auto;padding:36px var(--rand) 56px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:14.5px;color:var(--zacht)}
+
+@media (max-width:1080px){
+  .podium{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .kaartvak{grid-column:1 / -1;order:-1}
+  .kaart{min-height:340px}
+  .uitleg-blok,.start .in{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width:700px){
+  .podium{grid-template-columns:minmax(0,1fr)}
+  .kaart{min-height:260px}
+  .gesprek{min-height:340px;max-height:340px}
+  .bonvak .printer{min-height:330px}
+  .punten{grid-template-columns:minmax(0,1fr)}
+  header.top{grid-template-columns:minmax(0,1fr)}
+  .balk span:last-child{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="balk"><span>Demo voor Sushi Time · door DesignCheck</span><span>Voorbeeldgesprek, geen echte bestelling</span></div>
+
+<header class="top">
+  <div>
+    <img class="logo" src="logo.svg" alt="Sushi Time" width="470" height="111">
+    <h1>Eén nummer voor <em>al uw vestigingen.</em></h1>
+  </div>
+  <p class="onder">De AI-receptionist neemt op, vraagt de postcode, kiest zelf de vestiging die bezorgt en zet de bestelling klaar in CashDesk van díe vestiging.</p>
+</header>
+
+<div class="keuze" role="group" aria-label="Kies een voorbeeldgesprek">
+  <span class="uitleg">Luister naar een beller:</span>
+  <button type="button" data-sc="mijdrecht" aria-pressed="true">Uit Mijdrecht</button>
+  <button type="button" data-sc="amstelveen" aria-pressed="false">Uit Amstelveen</button>
+  <button type="button" class="opnieuw" id="pauze" hidden>Pauze</button>
+  <button type="button" class="opnieuw" id="opnieuw">Opnieuw</button>
+</div>
+
+<section class="podium" id="podium" aria-label="Demo">
+  <div class="vak gespreksvak">
+    <div class="vak-kop"><strong>Gesprek · centraal nummer</strong><span class="live"><i></i><span class="num" id="klok">00:00</span></span></div>
+    <div class="gesprek" id="gesprek" aria-live="polite"></div>
+  </div>
+  <div class="vak kaartvak">
+    <div class="vak-kop"><strong>Welke vestiging bezorgt?</strong><span id="kaartstatus" class="live">Alle vestigingen</span></div>
+    <div class="kaart"><svg id="kaart" viewBox="0 0 600 440" role="img" aria-label="Kaart met de vestigingen van Sushi Time"></svg>
+      <div class="kaart-onder"><span>Vestigingen: sushitime.nl</span><span>Bezorggebieden: voorbeeld</span></div>
+    </div>
+  </div>
+  <div class="vak bonvak">
+    <div class="vak-kop"><strong>CashDesk · bon</strong><span class="live" id="bonstatus">Wacht op bestelling</span></div>
+    <div class="printer">
+      <div class="bon" id="bon"></div>
+      <p class="leeg">Hier komt de bestelling binnen, bij de juiste vestiging.</p>
+    </div>
+  </div>
+</section>
+<p class="noot"><strong>Simulatie.</strong> Gerechten en prijzen komen van de bestelpagina's van de vestigingen (opgehaald 6 november). De koppeling met CashDesk bestaat nog niet: die vragen we samen met u aan bij CashDesk.</p>
+
+<section class="uitleg-blok">
+  <h2>Wat u net zag</h2>
+  <div class="punten">
+    <div><h3><span>1</span>Eén nummer</h3><p>Eén telefoonnummer voor de hele keten, voor de reclame en op de tas. De nummers van de vestigingen blijven gewoon werken.</p></div>
+    <div><h3><span>2</span>De juiste vestiging</h3><p>De receptionist vraagt de postcode en kiest de vestiging die daar bezorgt. Valt een adres buiten elk bezorggebied, dan biedt hij afhalen aan bij de dichtstbijzijnde vestiging.</p></div>
+    <div><h3><span>3</span>De kaart van díe vestiging</h3><p>Elke vestiging heeft eigen gerechten, prijzen en tijden. De receptionist rekent altijd met de kaart van de vestiging die de bestelling maakt.</p>
+      <p class="prijsvb num">Voorbeeld: de Sushi Time Box kost in Wilnis € 36,95 en in Amstelveen Westwijk € 37,45.</p></div>
+    <div><h3><span>4</span>Direct in CashDesk</h3><p>De bestelling komt als bon binnen bij die vestiging. Niemand hoeft iets over te typen, en in de drukte van vrijdagavond blijft niemand in de wacht hangen.</p></div>
+  </div>
+</section>
+
+<section class="start">
+  <div class="in">
+    <div>
+      <h2>Zo beginnen we</h2>
+      <a class="afspraak" href="mailto:info@designcheck.nl?subject=Afspraak%20Sushi%20Time%20AI-receptionist">Plan een afspraak →</a>
+    </div>
+    <ol>
+      <li><div><strong>Proef met 1–2 vestigingen</strong><span>We zetten de receptionist aan voor een of twee vestigingen en luisteren mee met de eerste gesprekken.</span></div></li>
+      <li><div><strong>Koppeling met CashDesk</strong><span>Samen met u vragen we partnertoegang aan bij CashDesk, zodat de bestellingen echt in de kassa landen.</span></div></li>
+      <li><div><strong>Uitrollen naar alle vestigingen</strong><span>Werkt het, dan zetten we het centrale nummer aan voor de hele keten.</span></div></li>
+    </ol>
+  </div>
+</section>
+
+<footer><span>Gemaakt voor Sushi Time door DesignCheck</span><span>designcheck.nl</span></footer>
+
+<script>
+(function () {
+  // Vestigingen zoals op sushitime.nl; coördinaten = plaatsmidden (benadering)
+  var V = [
+    ['Aalsmeer', 52.264, 4.760], ['Amersfoort', 52.156, 5.388], ['Amstelveen Westwijk', 52.287, 4.836],
+    ['Amsterdam', 52.360, 4.866], ['Baarn', 52.211, 5.288], ['Bussum', 52.274, 5.162],
+    ['De Bilt', 52.110, 5.181], ['Den Haag', 52.078, 4.300], ['Hilversum', 52.226, 5.181],
+    ['Tiel', 51.886, 5.430], ['Utrecht', 52.091, 5.122], ['Wilnis', 52.198, 4.896]
+  ];
+  var LABEL_LINKS = { 'De Bilt': 1, 'Aalsmeer': 1, 'Amersfoort': 1, 'Tiel': 1, 'Hilversum': 1 };
+  var LABEL_ONDER = { 'Utrecht': 1 };
+  var LABEL_BOVEN = { 'Amstelveen Westwijk': 1, 'Hilversum': 1 };
+  function xy(lat, lon) { return [(lon - 4.18) * 68 * 7, (52.43 - lat) * 111 * 7]; }
+
+  var SC = {
+    mijdrecht: {
+      beller: ['Beller · 3641', 52.207, 4.865], vest: 'Wilnis',
+      zinnen: [
+        ['bot', 'Goedenavond, Sushi Time. Wilt u bestellen voor bezorgen of afhalen?'],
+        ['klant', 'Bezorgen graag.'],
+        ['bot', 'Wat is uw postcode en huisnummer?'],
+        ['klant', '3641, nummer 12. Mijdrecht.', 'pin'],
+        ['bot', 'Dank u. U valt onder Sushi Time Wilnis. Wat mag het zijn?', 'route'],
+        ['klant', 'Een Mix Medium en twee pushpops Cream Salmon.'],
+        ['bot', 'Een Mix Medium, 26 stuks, € 30,95, en twee Pushpop Cream Salmon à € 11,95. Samen € 54,85. Klopt dat?'],
+        ['klant', 'Ja, klopt.'],
+        ['bot', 'Op welke naam mag ik het zetten?'],
+        ['klant', 'De Vries.'],
+        ['bot', 'Genoteerd op naam De Vries. Uw bestelling staat klaar bij Sushi Time Wilnis. Eet smakelijk!', 'bon']
+      ],
+      bon: { vest: 'Sushi Time Wilnis', regels: [['1× Mix Medium 26st', '€ 30,95'], ['2× Pushpop Cream Salmon', '€ 23,90']], totaal: '€ 54,85', naam: 'De Vries', pc: '3641 · nr. 12' }
+    },
+    amstelveen: {
+      beller: ['Beller · 1187', 52.297, 4.806], vest: 'Amstelveen Westwijk',
+      zinnen: [
+        ['bot', 'Goedenavond, Sushi Time. Wilt u bestellen voor bezorgen of afhalen?'],
+        ['klant', 'Bezorgen, in Amstelveen.'],
+        ['bot', 'Wat is uw postcode en huisnummer?'],
+        ['klant', '1187, nummer 5.', 'pin'],
+        ['bot', 'Dank u. U valt onder Sushi Time Amstelveen Westwijk. Wat mag het zijn?', 'route'],
+        ['klant', 'De Sushi Time Box.'],
+        ['bot', 'De Sushi Time Box, € 37,45. Wilt u er nog iets bij?'],
+        ['klant', 'Nee, dat is alles.'],
+        ['bot', 'Op welke naam mag ik het zetten?'],
+        ['klant', 'Jansen.'],
+        ['bot', 'Genoteerd op naam Jansen. Uw bestelling staat klaar bij Sushi Time Amstelveen Westwijk. Eet smakelijk!', 'bon']
+      ],
+      bon: { vest: 'Sushi Time Amstelveen Westwijk', regels: [['1× Sushi Time Box', '€ 37,45']], totaal: '€ 37,45', naam: 'Jansen', pc: '1187 · nr. 5' }
+    }
+  };
+
+  var svg = document.getElementById('kaart'), NS = 'http://www.w3.org/2000/svg';
+  var gesprek = document.getElementById('gesprek'), bon = document.getElementById('bon');
+  var klok = document.getElementById('klok'), podium = document.getElementById('podium');
+  var kaartstatus = document.getElementById('kaartstatus'), bonstatus = document.getElementById('bonstatus');
+  var stil = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var VOL = [10, 14, 640, 469], vb = VOL.slice(), timers = [], klokTimer = null, huidig = 'mijdrecht';
+
+  function el(n, a) { var e = document.createElementNS(NS, n); for (var k in a) e.setAttribute(k, a[k]); return e; }
+  var punten = {};
+  V.forEach(function (v) {
+    var p = xy(v[1], v[2]), g = el('g', { 'class': 'vest' });
+    var c = el('circle', { cx: p[0], cy: p[1], r: 5 });
+    var t = el('text', { x: p[0], y: p[1] });
+    t.textContent = v[0];
+    g.appendChild(c); g.appendChild(t); svg.appendChild(g);
+    punten[v[0]] = { g: g, c: c, t: t, x: p[0], y: p[1], links: !!LABEL_LINKS[v[0]], onder: !!LABEL_ONDER[v[0]], boven: !!LABEL_BOVEN[v[0]] };
+  });
+  var route = el('path', { 'class': 'route', d: '' }); svg.insertBefore(route, svg.firstChild);
+  var beller = el('g', { 'class': 'beller' }); beller.style.display = 'none';
+  var bc = el('circle', { r: 6 }), bt = el('text', {}); beller.appendChild(bc); beller.appendChild(bt); svg.appendChild(beller);
+  var bellerPos = null;
+
+  function schaal() { // houdt stippen en letters even groot, wat de zoom ook is
+    var s = vb[2] / 600 * Math.max(1, 470 / (svg.clientWidth || 470));
+    for (var n in punten) {
+      var p = punten[n];
+      p.c.setAttribute('r', 6 * s);
+      p.t.setAttribute('font-size', 15 * s);
+      p.t.setAttribute('x', p.links ? p.x - 10 * s : p.x + 10 * s);
+      p.t.setAttribute('y', p.onder ? p.y + 19 * s : p.boven ? p.y - 10 * s : p.y + 5 * s);
+      p.t.setAttribute('text-anchor', p.links ? 'end' : 'start');
+    }
+    if (bellerPos) {
+      bc.setAttribute('cx', bellerPos[0]); bc.setAttribute('cy', bellerPos[1]);
+      bc.setAttribute('r', 7 * s); bc.setAttribute('stroke-width', 2 * s);
+      bt.setAttribute('x', bellerPos[0] - 11 * s); bt.setAttribute('y', bellerPos[1] - 11 * s);
+      bt.setAttribute('font-size', 15 * s); bt.setAttribute('text-anchor', 'end');
+    }
+    route.setAttribute('stroke-width', 3.5 * s);
+    svg.setAttribute('viewBox', vb.join(' '));
+  }
+  function zoomNaar(doel, ms) {
+    var van = vb.slice(), t0 = performance.now();
+    if (stil || !ms) { vb = doel.slice(); schaal(); return; }
+    (function stap(t) {
+      var k = Math.min(1, (t - t0) / ms), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+      for (var i = 0; i < 4; i++) vb[i] = van[i] + (doel[i] - van[i]) * e;
+      schaal(); if (k < 1) requestAnimationFrame(stap);
+    })(t0);
+  }
+  function rondom(a, b) { // venster om beller en vestiging, in de verhouding van de kaart
+    var minx = Math.min(a[0], b[0]), maxx = Math.max(a[0], b[0]), miny = Math.min(a[1], b[1]), maxy = Math.max(a[1], b[1]);
+    var w = Math.max(Math.max(maxx - minx, 40) * 3.2, 270), h = w * 440 / 600;
+    var cx = (minx + maxx) / 2, cy = (miny + maxy) / 2;
+    return [cx - w / 2, cy - h / 2, w, h];
+  }
+
+  function reset() {
+    timers.forEach(clearTimeout); timers = []; clearInterval(klokTimer);
+    gesprek.innerHTML = ''; bon.classList.remove('uit'); bon.innerHTML = '';
+    route.setAttribute('d', ''); route.style.strokeDasharray = ''; beller.style.display = 'none'; bellerPos = null;
+    for (var n in punten) punten[n].g.setAttribute('class', 'vest');
+    kaartstatus.textContent = 'Alle vestigingen'; bonstatus.textContent = 'Wacht op bestelling';
+    podium.classList.remove('speelt'); klok.textContent = '00:00';
+    vb = VOL.slice(); schaal();
+  }
+  function zin(wie, tekst) {
+    var d = document.createElement('div'); d.className = 'zin ' + wie;
+    d.innerHTML = '<small>' + (wie === 'bot' ? 'Receptionist' : 'Beller') + '</small>';
+    d.appendChild(document.createTextNode(tekst));
+    gesprek.appendChild(d); gesprek.scrollTop = gesprek.scrollHeight;
+  }
+  function typen() { var d = document.createElement('div'); d.className = 'zin bot typen'; d.innerHTML = '<b></b><b></b><b></b>'; gesprek.appendChild(d); gesprek.scrollTop = gesprek.scrollHeight; return d; }
+  function melding(t) { var d = document.createElement('div'); d.className = 'melding'; d.textContent = t; gesprek.appendChild(d); gesprek.scrollTop = gesprek.scrollHeight; }
+
+  function actie(a, s) {
+    var v = punten[s.vest];
+    if (a === 'pin') {
+      bellerPos = xy(s.beller[1], s.beller[2]); bt.textContent = s.beller[0]; beller.style.display = '';
+      zoomNaar(rondom(bellerPos, [v.x, v.y]), 1800); kaartstatus.textContent = 'Postcode opgezocht';
+    }
+    if (a === 'route') {
+      for (var n in punten) punten[n].g.setAttribute('class', 'vest ' + (n === s.vest ? 'aan' : 'uit'));
+      route.setAttribute('d', 'M' + bellerPos[0] + ' ' + bellerPos[1] + ' L' + v.x + ' ' + v.y);
+      var len = Math.hypot(v.x - bellerPos[0], v.y - bellerPos[1]);
+      if (!stil) { route.style.transition = 'none'; route.style.strokeDasharray = len; route.style.strokeDashoffset = len; route.getBoundingClientRect(); route.style.transition = 'stroke-dashoffset 1s ease-out'; route.style.strokeDashoffset = 0; }
+      kaartstatus.textContent = s.vest; melding('→ Doorgezet naar ' + s.bon.vest);
+    }
+    if (a === 'bon') {
+      var b = s.bon, nu = new Date(), tijd = ('0' + nu.getHours()).slice(-2) + ':' + ('0' + nu.getMinutes()).slice(-2);
+      bon.innerHTML = '<h3>' + b.vest + '</h3><div class="rij num"><span>BEZORGEN</span><span>' + tijd + '</span></div><hr>' +
+        b.regels.map(function (r) { return '<div class="rij num"><span>' + r[0] + '</span><span>' + r[1] + '</span></div>'; }).join('') +
+        '<hr><div class="rij groot num"><span>Subtotaal</span><span>' + b.totaal + '</span></div><hr>' +
+        '<div class="rij"><span>Naam</span><span>' + b.naam + '</span></div><div class="rij num"><span>Postcode</span><span>' + b.pc + '</span></div>' +
+        '<div class="stempel">✓ Via telefoon · AI-receptionist</div><div class="klein">Simulatie van de bon in CashDesk</div>';
+      requestAnimationFrame(function () { bon.classList.add('uit'); });
+      bonstatus.textContent = 'Bon ontvangen'; melding('✓ Bestelling in CashDesk van ' + s.bon.vest);
+      clearInterval(klokTimer); podium.classList.remove('speelt');
+    }
+  }
+
+  // Met geluid: de echte opname (audio/sushi-<naam>.mp3) stuurt alles aan; de tijden staan in audio/sushi-<naam>.json
+  var audio = new Audio(), tijden = {}, rafId = 0, getoond = 0;
+  ['mijdrecht', 'amstelveen'].forEach(function (n) {
+    fetch('audio/sushi-' + n + '.json').then(function (r) { return r.json(); }).then(function (j) { tijden[n] = j; if (n === huidig) startkaart(); });
+  });
+  function mmss(t) { t = Math.max(0, Math.floor(t)); return ('0' + Math.floor(t / 60)).slice(-2) + ':' + ('0' + (t % 60)).slice(-2); }
+  function startkaart() {
+    if (podium.classList.contains('speelt') || gesprek.querySelector('.zin')) return;
+    var j = tijden[huidig];
+    gesprek.innerHTML = '<div class="startkaart"><button type="button" class="speelknop" id="speelknop" aria-label="Speel het gesprek af">' +
+      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z" fill="currentColor"/></svg></button>' +
+      '<p><strong>Luister mee</strong><br>Een echt klinkend gesprek' + (j ? ' · ' + mmss(j.duur).replace(/^0/, '') : '') + '</p>' +
+      '<button type="button" class="stilknop" id="stilknop">of bekijk zonder geluid</button></div>';
+    document.getElementById('speelknop').onclick = function () { speel(huidig); };
+    document.getElementById('stilknop').onclick = function () { speelStil(huidig); };
+  }
+  function lus() {
+    var j = tijden[huidig], s = SC[huidig], t = audio.currentTime;
+    klok.textContent = mmss(t);
+    while (getoond < j.zinnen.length && t >= j.zinnen[getoond].van - 0.05) {
+      var z = s.zinnen[getoond]; zin(z[0], z[1]); if (z[2]) actie(z[2], s); getoond++;
+    }
+    if (!audio.paused && !audio.ended) rafId = requestAnimationFrame(lus);
+  }
+  function speel(naam) {
+    reset(); huidig = naam; getoond = 0;
+    document.querySelectorAll('.keuze [data-sc]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.sc === naam); });
+    if (!tijden[naam]) { speelStil(naam); return; }
+    audio.pause(); audio.src = 'audio/sushi-' + naam + '.mp3'; audio.currentTime = 0;
+    podium.classList.add('speelt'); pauzeknop.hidden = false; pauzeknop.textContent = 'Pauze';
+    audio.play().then(function () { cancelAnimationFrame(rafId); rafId = requestAnimationFrame(lus); })
+      .catch(function () { speelStil(naam); });
+  }
+  audio.addEventListener('ended', function () { podium.classList.remove('speelt'); pauzeknop.hidden = true; lus(); });
+  var pauzeknop = document.getElementById('pauze');
+  pauzeknop.addEventListener('click', function () {
+    if (audio.paused) { audio.play(); pauzeknop.textContent = 'Pauze'; podium.classList.add('speelt'); rafId = requestAnimationFrame(lus); }
+    else { audio.pause(); pauzeknop.textContent = 'Verder'; podium.classList.remove('speelt'); }
+  });
+
+  // Zonder geluid: dezelfde volgorde op een eigen klok (ook bij 'minder beweging')
+  function speelStil(naam) {
+    audio.pause(); reset(); huidig = naam; var s = SC[naam]; pauzeknop.hidden = true;
+    document.querySelectorAll('.keuze [data-sc]').forEach(function (b) { b.setAttribute('aria-pressed', b.dataset.sc === naam); });
+    if (stil) { s.zinnen.forEach(function (z) { zin(z[0], z[1]); if (z[2]) actie(z[2], s); }); return; }
+    podium.classList.add('speelt');
+    var start = Date.now();
+    klokTimer = setInterval(function () { klok.textContent = mmss((Date.now() - start) / 1000); }, 250);
+    var t = 400;
+    s.zinnen.forEach(function (z) {
+      if (z[0] === 'bot') {
+        var tt = t; timers.push(setTimeout(function () { var d = typen(); timers.push(setTimeout(function () { d.remove(); }, 700)); }, tt));
+        t += 700;
+      }
+      (function (z, at) { timers.push(setTimeout(function () { zin(z[0], z[1]); if (z[2]) actie(z[2], s); }, at)); })(z, t);
+      t += 650 + z[1].length * 32;
+    });
+  }
+
+  document.querySelectorAll('.keuze [data-sc]').forEach(function (b) { b.addEventListener('click', function () { speel(b.dataset.sc); }); });
+  document.getElementById('opnieuw').addEventListener('click', function () { speel(huidig); });
+  schaal();
+  addEventListener('resize', schaal);
+})();
+</script>
+</body>
+</html>
